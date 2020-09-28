@@ -15,33 +15,58 @@ namespace EventSourcing
             _store = store;
         }
 
-        public async Task<IEnumerable<IEvent>> GetEvents(string id)
+        public async Task<IEnumerable<IDomainEvent>> GetEvents(string id)
         {
             var eventData = await _store.GetEvents(id);
-            var events = eventData.Select(x => this.DeserializeEvent(x.eventData, x.clrType));
+            var events = eventData.Select(this.DeserializeEvent);
             
             return events;
         }
 
-        public async Task AppendToStream(string id, int expectedVersion, ICollection<IEvent> events)
+        public async Task AppendToStream(string id, int expectedVersion, ICollection<IDomainEvent> events)
         {
             var eventData = events
-                .Select(x => (this.SerializeEvent(x), x.GetType().AssemblyQualifiedName))
+                .Select(this.SerializeEvent)
                 .ToList();
             
             await this._store.AppendToStream(id, expectedVersion, eventData);
         }
         
-        private IEvent DeserializeEvent(string eventData, string clrType)
+        private IDomainEvent DeserializeEvent(string eventData)
         {
-            var type = Type.GetType(clrType, true);
-            var @event = (IEvent)JsonConvert.DeserializeObject(eventData, type);
-            return @event;
+            var wrappedEvent = JsonConvert.DeserializeObject<WrappedEvent>(eventData);
+
+            return wrappedEvent.ToDomainEvent();
         }
 
-        private string SerializeEvent(IEvent @event)
+        private string SerializeEvent(IDomainEvent @event)
         {
-            return JsonConvert.SerializeObject(@event);
+            var wrappedEvent = new WrappedEvent(@event);
+
+            return JsonConvert.SerializeObject(wrappedEvent);
+        }
+        
+        public class WrappedEvent
+        {
+            public WrappedEvent() { }
+            
+            public WrappedEvent(IDomainEvent @event)
+            {
+                ClrType = @event.GetType().AssemblyQualifiedName;
+                Event = JsonConvert.SerializeObject(@event);
+            }
+            
+            public string Event { get; set; }
+
+            public string ClrType { get; set; }
+
+            public IDomainEvent ToDomainEvent()
+            {
+                var type = Type.GetType(this.ClrType, true);
+                var @event = (IDomainEvent)JsonConvert.DeserializeObject(this.Event, type);
+
+                return @event;
+            }
         }
     }
 }

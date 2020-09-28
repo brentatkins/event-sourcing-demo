@@ -37,7 +37,7 @@ namespace EventSourcing.Tests
 
             var id = Guid.NewGuid().ToString();
             var newEvent = new TestEventA("user", 100);
-            await sut.AppendToStream(id, 0, new List<IEvent> {newEvent});
+            await sut.AppendToStream(id, 0, new List<IDomainEvent> {newEvent});
             
             var events = (await sut.GetEvents(id)).ToList();
 
@@ -52,10 +52,10 @@ namespace EventSourcing.Tests
             var id = Guid.NewGuid().ToString();
             var event1 = new TestEventA("user", 100);
             var event2 = new TestEventA("user", 200);
-            await sut.AppendToStream(id, 0, new List<IEvent> {event1, event2});
+            await sut.AppendToStream(id, 0, new List<IDomainEvent> {event1, event2});
             
             var newEvent = new TestEventA("user", 300);
-            await sut.AppendToStream(id, 2, new List<IEvent> {newEvent});
+            await sut.AppendToStream(id, 2, new List<IDomainEvent> {newEvent});
             
             var events = (await sut.GetEvents(id)).ToList();
         
@@ -73,7 +73,7 @@ namespace EventSourcing.Tests
             var id = Guid.NewGuid().ToString();
             var event1 = new TestEventA("user", 100);
             var event2 = new TestEventA("user", 200);
-            await sut.AppendToStream(id, 0, new List<IEvent> {event1, event2});
+            await sut.AppendToStream(id, 0, new List<IDomainEvent> {event1, event2});
             
             var idWithNoEvents = Guid.NewGuid().ToString();
             var events = (await sut.GetEvents(idWithNoEvents)).ToList();
@@ -89,7 +89,7 @@ namespace EventSourcing.Tests
             var id = Guid.NewGuid().ToString();
             var event1 = new TestEventA("user", 100);
             var event2 = new TestEventA("user", 200);
-            await sut.AppendToStream(id, 0, new List<IEvent> {event1, event2});
+            await sut.AppendToStream(id, 0, new List<IDomainEvent> {event1, event2});
             
             var events = (await sut.GetEvents(id)).ToList();
         
@@ -104,11 +104,11 @@ namespace EventSourcing.Tests
             var id = Guid.NewGuid().ToString();
             var event1 = new TestEventA("user", 100);
             var event2 = new TestEventA("user", 200);
-            await sut.AppendToStream(id, 0, new List<IEvent> {event1, event2});
+            await sut.AppendToStream(id, 0, new List<IDomainEvent> {event1, event2});
             
             var otherId = Guid.NewGuid().ToString();
             var otherEvent1 = new TestEventA("user", 300);
-            await sut.AppendToStream(otherId, 0, new List<IEvent> {otherEvent1});
+            await sut.AppendToStream(otherId, 0, new List<IDomainEvent> {otherEvent1});
             
             var events = (await sut.GetEvents(id)).ToList();
         
@@ -120,7 +120,7 @@ namespace EventSourcing.Tests
             return new EventStore(new PoorMansAppendOnlyStore(_testDbFilePath));
         }
 
-        public class TestEventA : BaseEvent
+        public class TestEventA : BaseDomainEvent
         {
             public int SequenceNumber { get; }
 

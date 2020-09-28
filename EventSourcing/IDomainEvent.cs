@@ -2,7 +2,7 @@ using System;
 
 namespace EventSourcing
 {
-    public interface IEvent
+    public interface IDomainEvent
     {
         DateTime TimeStamp { get; }
 

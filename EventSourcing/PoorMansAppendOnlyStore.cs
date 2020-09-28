@@ -16,7 +16,7 @@ namespace EventSourcing
             _filePath = filePath;
         }
 
-        public Task<IEnumerable<(string eventData, string clrType)>> GetEvents(string id)
+        public Task<IEnumerable<string>> GetEvents(string id)
         {
             string[] lines = File.ReadAllLines(_filePath);
 
@@ -25,13 +25,13 @@ namespace EventSourcing
             var events = wrappedEvents
                 .Where(x => x.Id == id)
                 .OrderBy(x => x.Version)
-                .Select(x => (x.Event, x.ClrType))
+                .Select(x => x.EventData)
                 .AsEnumerable();
 
             return Task.FromResult(events);
         }
 
-        public Task AppendToStream(string id, int expectedVersion, ICollection<(string eventData, string clrType)> events)
+        public Task AppendToStream(string id, int expectedVersion, ICollection<string> events)
         {
             var actualVersion = GetLatestStoredVersionNumber(id);
 
@@ -40,12 +40,11 @@ namespace EventSourcing
                 throw new AppendOnlyStoreConcurrencyException(expectedVersion, actualVersion);
             }
 
-            var lines = events.Select((x, i) => new WrappedEvent
+            var lines = events.Select((x, i) => new DbEvent()
                 {
                     Id = id,
                     Version = expectedVersion + i + 1,
-                    Event = x.eventData,
-                    ClrType = x.clrType
+                    EventData = x
                 })
                 .Select(this.SerializeEvent)
                 .ToList();
@@ -57,7 +56,7 @@ namespace EventSourcing
         private int GetLatestStoredVersionNumber(string id)
         {
             var wrappedEvents = File.ReadAllLines(_filePath)
-                .Select(JsonConvert.DeserializeObject<WrappedEvent>)
+                .Select(JsonConvert.DeserializeObject<DbEvent>)
                 .Where(x => x.Id == id)
                 .ToList();
 
@@ -69,30 +68,23 @@ namespace EventSourcing
             return 0;
         }
 
-        private WrappedEvent DeserializeEvent(string arg)
+        private DbEvent DeserializeEvent(string data)
         {
-            var wrappedEvent = JsonConvert.DeserializeObject<WrappedEvent>(arg);
-            return wrappedEvent;
+            return JsonConvert.DeserializeObject<DbEvent>(data);
         }
 
-        private string SerializeEvent(WrappedEvent @wrappedEvent)
+        private string SerializeEvent(DbEvent dbEvent)
         {
-            return JsonConvert.SerializeObject(wrappedEvent);
+            return JsonConvert.SerializeObject(dbEvent);
         }
 
-        public class WrappedEvent
+        public class DbEvent
         {
-            public WrappedEvent()
-            {
-            }
-
             public string Id { get; set; }
             
-            public string Event { get; set; }
-
-            public string ClrType { get; set; }
-
             public int Version { get; set; }
+            
+            public string EventData { get; set; }
         }
     }
 }

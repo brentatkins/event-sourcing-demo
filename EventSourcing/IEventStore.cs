@@ -5,8 +5,8 @@ namespace EventSourcing
 {
     public interface IEventStore
     {
-        Task<IEnumerable<IEvent>> GetEvents(string id);
+        Task<IEnumerable<IDomainEvent>> GetEvents(string id);
 
-        Task AppendToStream(string id, int expectedVersion, ICollection<IEvent> events);
+        Task AppendToStream(string id, int expectedVersion, ICollection<IDomainEvent> events);
     }
 }
