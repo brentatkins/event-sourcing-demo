@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -40,12 +39,7 @@ namespace EventSourcing
                 throw new AppendOnlyStoreConcurrencyException(expectedVersion, actualVersion);
             }
 
-            var lines = events.Select((x, i) => new DbEvent()
-                {
-                    Id = id,
-                    Version = expectedVersion + i + 1,
-                    EventData = x
-                })
+            var lines = events.Select((x, i) => new DbEvent(id, expectedVersion + i + 1, x))
                 .Select(this.SerializeEvent)
                 .ToList();
             
@@ -80,11 +74,18 @@ namespace EventSourcing
 
         public class DbEvent
         {
-            public string Id { get; set; }
+            public DbEvent(string id, int version, string eventData)
+            {
+                Id = id;
+                Version = version;
+                EventData = eventData;
+            }
+
+            public string Id { get; }
             
-            public int Version { get; set; }
+            public int Version { get; }
             
-            public string EventData { get; set; }
+            public string EventData { get; }
         }
     }
 }

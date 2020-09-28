@@ -9,15 +9,15 @@ namespace EventSourcing.Tests
 {
     public class RepositoryTests
     {
-        private readonly string _testDbFilePath;
-        private EventStore _eventStore;
+        private readonly EventStore _eventStore;
 
         public RepositoryTests()
         {
-            _testDbFilePath = Path.Combine(Directory.GetCurrentDirectory(), "TestDb.txt");
+            string testDbFilePath = Path.Combine(Directory.GetCurrentDirectory(), "TestDb.txt");
+            _eventStore = new EventStore(new PoorMansAppendOnlyStore(testDbFilePath));
             
             // clear database
-            File.WriteAllText(_testDbFilePath, string.Empty);
+            File.WriteAllText(testDbFilePath, string.Empty);
         }
 
         [Fact]
@@ -89,8 +89,6 @@ namespace EventSourcing.Tests
 
         private EventSourcedRepository CreateSut()
         {
-            _eventStore = new EventStore(new PoorMansAppendOnlyStore(_testDbFilePath));
-            
             var repo = new EventSourcedRepository(_eventStore);
 
             return repo;

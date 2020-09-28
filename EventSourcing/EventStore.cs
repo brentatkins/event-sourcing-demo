@@ -56,7 +56,12 @@ namespace EventSourcing
         
         public class WrappedEvent
         {
-            public WrappedEvent() { }
+            [JsonConstructor]
+            public WrappedEvent(string clrType, string @event)
+            {
+                ClrType = clrType;
+                Event = @event;
+            }
             
             public WrappedEvent(IDomainEvent @event)
             {
@@ -71,8 +76,12 @@ namespace EventSourcing
             public IDomainEvent ToDomainEvent()
             {
                 var type = Type.GetType(this.ClrType, true);
-                var @event = (IDomainEvent)JsonConvert.DeserializeObject(this.Event, type);
-
+                
+                if (!(JsonConvert.DeserializeObject(this.Event, type) is IDomainEvent @event))
+                {
+                    throw new Exception($"Error deserializing event of type {type} with data {Event}");
+                }
+                
                 return @event;
             }
         }
