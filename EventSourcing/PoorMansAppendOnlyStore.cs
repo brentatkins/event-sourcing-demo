@@ -7,11 +7,11 @@ using Newtonsoft.Json;
 
 namespace EventSourcing
 {
-    public class TextFileAppendOnlyStore : IAppendOnlyStore
+    public class PoorMansAppendOnlyStore : IAppendOnlyStore
     {
         private readonly string _filePath;
 
-        public TextFileAppendOnlyStore(string filePath)
+        public PoorMansAppendOnlyStore(string filePath)
         {
             _filePath = filePath;
         }
@@ -37,7 +37,7 @@ namespace EventSourcing
 
             if (actualVersion != expectedVersion)
             {
-                throw new EventStoreConcurrencyException(expectedVersion, actualVersion, new List<IEvent>());
+                throw new AppendOnlyStoreConcurrencyException(expectedVersion, actualVersion);
             }
 
             var lines = events.Select((x, i) => new WrappedEvent

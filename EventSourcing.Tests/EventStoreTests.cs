@@ -117,7 +117,7 @@ namespace EventSourcing.Tests
 
         private IEventStore CreateSut()
         {
-            return new PoorMansEventStore(new TextFileAppendOnlyStore(_testDbFilePath));
+            return new EventStore(new PoorMansAppendOnlyStore(_testDbFilePath));
         }
 
         public class TestEventA : BaseEvent

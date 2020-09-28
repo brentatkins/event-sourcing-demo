@@ -10,7 +10,7 @@ namespace EventSourcing.Tests
     public class RepositoryTests
     {
         private string _testDbFilePath;
-        private PoorMansEventStore _eventStore;
+        private EventStore _eventStore;
 
         public RepositoryTests()
         {
@@ -89,7 +89,7 @@ namespace EventSourcing.Tests
 
         private EventSourcedRepository CreateSut()
         {
-            _eventStore = new PoorMansEventStore(new TextFileAppendOnlyStore(_testDbFilePath));
+            _eventStore = new EventStore(new PoorMansAppendOnlyStore(_testDbFilePath));
             
             var repo = new EventSourcedRepository(_eventStore);
 

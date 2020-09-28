@@ -6,11 +6,11 @@ using Newtonsoft.Json;
 
 namespace EventSourcing
 {
-    public class PoorMansEventStore : IEventStore
+    public class EventStore : IEventStore
     {
         private readonly IAppendOnlyStore _store;
 
-        public PoorMansEventStore(IAppendOnlyStore store)
+        public EventStore(IAppendOnlyStore store)
         {
             _store = store;
         }
