@@ -2,9 +2,9 @@ using System;
 
 namespace EventSourcing
 {
-    public class BaseDomainEvent : IDomainEvent
+    public class DomainEvent : IDomainEvent
     {
-        public BaseDomainEvent(string userId)
+        public DomainEvent(string userId)
         {
             UserId = userId;
             TimeStamp = DateTime.UtcNow;

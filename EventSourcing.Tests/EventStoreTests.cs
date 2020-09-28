@@ -140,7 +140,7 @@ namespace EventSourcing.Tests
             return new EventStore(new PoorMansAppendOnlyStore(_testDbFilePath));
         }
 
-        public class TestEventA : BaseDomainEvent
+        public class TestEventA : DomainEvent
         {
             public int SequenceNumber { get; }
 

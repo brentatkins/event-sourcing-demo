@@ -120,7 +120,7 @@ namespace EventSourcing.Tests
             }
         }
 
-        public class TestEvent : BaseDomainEvent
+        public class TestEvent : DomainEvent
         {
             public bool SomeProp { get; }
 
