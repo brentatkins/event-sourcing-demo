@@ -28,8 +28,16 @@ namespace EventSourcing
             var eventData = events
                 .Select(this.SerializeEvent)
                 .ToList();
-            
-            await this._store.AppendToStream(id, expectedVersion, eventData);
+
+            try
+            {
+                await this._store.AppendToStream(id, expectedVersion, eventData);
+            }
+            catch (AppendOnlyStoreConcurrencyException ex)
+            {
+                var pastEvents = await this.GetEvents(id);
+                throw new EventStoreConcurrencyException(ex.ExpectedVersion, ex.ActualVersion, pastEvents);
+            }
         }
         
         private IDomainEvent DeserializeEvent(string eventData)

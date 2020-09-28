@@ -9,7 +9,7 @@ namespace EventSourcing.Tests
 {
     public class RepositoryTests
     {
-        private string _testDbFilePath;
+        private readonly string _testDbFilePath;
         private EventStore _eventStore;
 
         public RepositoryTests()

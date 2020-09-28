@@ -66,6 +66,26 @@ namespace EventSourcing.Tests
         }
         
         [Fact]
+        public async Task AddEvents_IncorrectVersionNumber_ShouldThrow()
+        {
+            var sut = this.CreateSut();
+        
+            var id = Guid.NewGuid().ToString();
+            var event1 = new TestEventA("user", 100);
+            var event2 = new TestEventA("user", 200);
+            await sut.AppendToStream(id, 0, new List<IDomainEvent> {event1, event2});
+            
+            var newEvent = new TestEventA("user", 300);
+            
+            Func<Task> act = async () => await sut.AppendToStream(id, 0, new List<IDomainEvent> {newEvent});
+
+            act.Should().Throw<EventStoreConcurrencyException>()
+                .Where(x => x.ActualVersion == 2)
+                .Where(x => x.ExpectedVersion == 0)
+                .Where(x => x.Events.Count() == 2);
+        }
+        
+        [Fact]
         public async Task GetEvents_NoneForThisAggregateButHasOthers_ShouldReturnNothing()
         {
             var sut = this.CreateSut();
