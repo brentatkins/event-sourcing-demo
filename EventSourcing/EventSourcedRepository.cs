@@ -37,7 +37,7 @@ namespace EventSourcing
         public async Task Save<T>(T entity) where T : EventSourcedEntity
         {
             await _store.AppendToStream(entity.Id, entity.Version, entity.UncommittedEvents);
-            entity.UncommittedEvents.Clear();
+            entity.ClearUncommittedEvents();
         }
     }
 }
