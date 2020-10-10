@@ -65,7 +65,7 @@ namespace EventSourcing
             
             public WrappedEvent(IDomainEvent @event)
             {
-                ClrType = @event.GetType().AssemblyQualifiedName;
+                ClrType = @event.GetType().AssemblyQualifiedName!;
                 Event = JsonConvert.SerializeObject(@event);
             }
             
@@ -75,7 +75,7 @@ namespace EventSourcing
 
             public IDomainEvent ToDomainEvent()
             {
-                var type = Type.GetType(this.ClrType, true);
+                var type = Type.GetType(this.ClrType, true)!;
                 
                 if (!(JsonConvert.DeserializeObject(this.Event, type) is IDomainEvent @event))
                 {

@@ -8,9 +8,9 @@ namespace ShoppingCart.Tests
 {
     public class DomainTest<T> where T : EventSourcedEntity
     {
-        private DomainEvent[] _givenEvents;
-        private Func<T> _whenNewEntity;
-        private Action<T> _whenExistingEntity;
+        private DomainEvent[] _givenEvents = Array.Empty<DomainEvent>();
+        private Func<T>? _whenNewEntity;
+        private Action<T>? _whenExistingEntity;
 
         internal DomainTest<T> Given(params DomainEvent[] givenEvents)
         {
@@ -48,7 +48,7 @@ namespace ShoppingCart.Tests
             {
                 return _whenNewEntity.Invoke();
             }
-            else
+            else if (_whenExistingEntity != null)
             {
                 var ctor = typeof(T)
                     .GetConstructors(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
@@ -63,6 +63,10 @@ namespace ShoppingCart.Tests
                 _whenExistingEntity.Invoke(entity);
                 
                 return entity;
+            }
+            else
+            {
+                throw new Exception("Must assert on sumting");
             }
         }
     }
