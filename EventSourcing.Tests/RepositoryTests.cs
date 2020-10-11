@@ -39,7 +39,7 @@ namespace EventSourcing.Tests
 
             var id = Guid.NewGuid().ToString();
 
-            await _eventStore.AppendToStream(id, 0, new List<IDomainEvent>
+            await _eventStore.AppendToStream(id, 0, new List<DomainEvent>
             {
                 new TestEvent("user", true),
                 new TestEvent("user", true)
@@ -98,13 +98,13 @@ namespace EventSourcing.Tests
         {
             public int CountOfEventsReplayed { get; private set; }
             
-            private TestEntity(string id, IEnumerable<IDomainEvent> pastEvents) : base(id, pastEvents)
+            private TestEntity(string id, IEnumerable<DomainEvent> pastEvents) : base(id, pastEvents)
             {
             }
 
             public static TestEntity Create()
             {
-                var newEntity = new TestEntity(Guid.NewGuid().ToString(), new List<IDomainEvent>());
+                var newEntity = new TestEntity(Guid.NewGuid().ToString(), new List<DomainEvent>());
 
                 return newEntity;
             }

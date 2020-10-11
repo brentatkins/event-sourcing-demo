@@ -5,7 +5,7 @@ namespace EventSourcing
 {
     public class EventStoreConcurrencyException : Exception
     {
-        public EventStoreConcurrencyException(int expectedVersion, int actualVersion, IEnumerable<IDomainEvent> events)
+        public EventStoreConcurrencyException(int expectedVersion, int actualVersion, IEnumerable<DomainEvent> events)
         {
             ExpectedVersion = expectedVersion;
             ActualVersion = actualVersion;
@@ -16,6 +16,6 @@ namespace EventSourcing
         
         public int ActualVersion { get; }
         
-        public IEnumerable<IDomainEvent> Events { get; }
+        public IEnumerable<DomainEvent> Events { get; }
     }
 }

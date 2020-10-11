@@ -37,7 +37,7 @@ namespace EventSourcing.Tests
 
             var id = Guid.NewGuid().ToString();
             var newEvent = new TestEventA("user", 100);
-            await sut.AppendToStream(id, 0, new List<IDomainEvent> {newEvent});
+            await sut.AppendToStream(id, 0, new List<DomainEvent> {newEvent});
             
             var events = (await sut.GetEvents(id)).ToList();
 
@@ -52,10 +52,10 @@ namespace EventSourcing.Tests
             var id = Guid.NewGuid().ToString();
             var event1 = new TestEventA("user", 100);
             var event2 = new TestEventA("user", 200);
-            await sut.AppendToStream(id, 0, new List<IDomainEvent> {event1, event2});
+            await sut.AppendToStream(id, 0, new List<DomainEvent> {event1, event2});
             
             var newEvent = new TestEventA("user", 300);
-            await sut.AppendToStream(id, 2, new List<IDomainEvent> {newEvent});
+            await sut.AppendToStream(id, 2, new List<DomainEvent> {newEvent});
             
             var events = (await sut.GetEvents(id)).ToList();
         
@@ -73,11 +73,11 @@ namespace EventSourcing.Tests
             var id = Guid.NewGuid().ToString();
             var event1 = new TestEventA("user", 100);
             var event2 = new TestEventA("user", 200);
-            await sut.AppendToStream(id, 0, new List<IDomainEvent> {event1, event2});
+            await sut.AppendToStream(id, 0, new List<DomainEvent> {event1, event2});
             
             var newEvent = new TestEventA("user", 300);
             
-            Func<Task> act = async () => await sut.AppendToStream(id, 0, new List<IDomainEvent> {newEvent});
+            Func<Task> act = async () => await sut.AppendToStream(id, 0, new List<DomainEvent> {newEvent});
 
             act.Should().Throw<EventStoreConcurrencyException>()
                 .Where(x => x.ActualVersion == 2)
@@ -93,7 +93,7 @@ namespace EventSourcing.Tests
             var id = Guid.NewGuid().ToString();
             var event1 = new TestEventA("user", 100);
             var event2 = new TestEventA("user", 200);
-            await sut.AppendToStream(id, 0, new List<IDomainEvent> {event1, event2});
+            await sut.AppendToStream(id, 0, new List<DomainEvent> {event1, event2});
             
             var idWithNoEvents = Guid.NewGuid().ToString();
             var events = (await sut.GetEvents(idWithNoEvents)).ToList();
@@ -109,7 +109,7 @@ namespace EventSourcing.Tests
             var id = Guid.NewGuid().ToString();
             var event1 = new TestEventA("user", 100);
             var event2 = new TestEventA("user", 200);
-            await sut.AppendToStream(id, 0, new List<IDomainEvent> {event1, event2});
+            await sut.AppendToStream(id, 0, new List<DomainEvent> {event1, event2});
             
             var events = (await sut.GetEvents(id)).ToList();
         
@@ -124,11 +124,11 @@ namespace EventSourcing.Tests
             var id = Guid.NewGuid().ToString();
             var event1 = new TestEventA("user", 100);
             var event2 = new TestEventA("user", 200);
-            await sut.AppendToStream(id, 0, new List<IDomainEvent> {event1, event2});
+            await sut.AppendToStream(id, 0, new List<DomainEvent> {event1, event2});
             
             var otherId = Guid.NewGuid().ToString();
             var otherEvent1 = new TestEventA("user", 300);
-            await sut.AppendToStream(otherId, 0, new List<IDomainEvent> {otherEvent1});
+            await sut.AppendToStream(otherId, 0, new List<DomainEvent> {otherEvent1});
             
             var events = (await sut.GetEvents(id)).ToList();
         

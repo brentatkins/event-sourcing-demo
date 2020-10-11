@@ -27,7 +27,7 @@ namespace EventSourcing
                 .Single(c =>
                     c.GetParameters().Length == 2 &&
                     c.GetParameters().First().ParameterType == typeof(string) &&
-                    c.GetParameters().Last().ParameterType == typeof(IEnumerable<IDomainEvent>));
+                    c.GetParameters().Last().ParameterType == typeof(IEnumerable<DomainEvent>));
             
             var instance = (T)ctor.Invoke(new object[] { id, events });
 

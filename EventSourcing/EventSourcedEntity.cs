@@ -4,14 +4,14 @@ namespace EventSourcing
 {
     public abstract class EventSourcedEntity
     {
-        private List<IDomainEvent> _uncommittedEvents;
+        private List<DomainEvent> _uncommittedEvents;
         public string Id { get; protected set; }
 
         internal int Version { get; private set; }
         
-        protected EventSourcedEntity(string id, IEnumerable<IDomainEvent> pastEvents)
+        protected EventSourcedEntity(string id, IEnumerable<DomainEvent> pastEvents)
         {
-            _uncommittedEvents = new List<IDomainEvent>();
+            _uncommittedEvents = new List<DomainEvent>();
             Id = id;
             Version = 0;
             
@@ -22,13 +22,14 @@ namespace EventSourcing
             }
         }
 
-        private void ApplyEvent(IDomainEvent @event)
+        private void ApplyEvent(DomainEvent @event)
         {
             ((dynamic) this).When((dynamic)@event);
         }
 
-        protected void RaiseEvent(IDomainEvent @event)
+        protected void RaiseEvent(DomainEvent @event)
         {
+            @event.EntityId = Id;
             _uncommittedEvents.Add(@event);
             ApplyEvent(@event);
         }
@@ -38,6 +39,6 @@ namespace EventSourcing
             _uncommittedEvents.Clear();
         }
 
-        public ICollection<IDomainEvent> UncommittedEvents => _uncommittedEvents.AsReadOnly();
+        public ICollection<DomainEvent> UncommittedEvents => _uncommittedEvents.AsReadOnly();
     }
 }

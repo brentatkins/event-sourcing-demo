@@ -15,7 +15,7 @@ namespace EventSourcing
             _store = store;
         }
 
-        public async Task<IEnumerable<IDomainEvent>> GetEvents(string id)
+        public async Task<IEnumerable<DomainEvent>> GetEvents(string id)
         {
             var eventData = await _store.GetEvents(id);
             var events = eventData.Select(this.DeserializeEvent);
@@ -23,7 +23,7 @@ namespace EventSourcing
             return events;
         }
 
-        public async Task AppendToStream(string id, int expectedVersion, ICollection<IDomainEvent> events)
+        public async Task AppendToStream(string id, int expectedVersion, ICollection<DomainEvent> events)
         {
             var eventData = events
                 .Select(this.SerializeEvent)
@@ -40,14 +40,14 @@ namespace EventSourcing
             }
         }
         
-        private IDomainEvent DeserializeEvent(string eventData)
+        private DomainEvent DeserializeEvent(string eventData)
         {
             var wrappedEvent = JsonConvert.DeserializeObject<WrappedEvent>(eventData);
 
             return wrappedEvent.ToDomainEvent();
         }
 
-        private string SerializeEvent(IDomainEvent @event)
+        private string SerializeEvent(DomainEvent @event)
         {
             var wrappedEvent = new WrappedEvent(@event);
 
@@ -63,7 +63,7 @@ namespace EventSourcing
                 Event = @event;
             }
             
-            public WrappedEvent(IDomainEvent @event)
+            public WrappedEvent(DomainEvent @event)
             {
                 ClrType = @event.GetType().AssemblyQualifiedName!;
                 Event = JsonConvert.SerializeObject(@event);
@@ -73,11 +73,11 @@ namespace EventSourcing
 
             public string ClrType { get; set; }
 
-            public IDomainEvent ToDomainEvent()
+            public DomainEvent ToDomainEvent()
             {
                 var type = Type.GetType(this.ClrType, true)!;
                 
-                if (!(JsonConvert.DeserializeObject(this.Event, type) is IDomainEvent @event))
+                if (!(JsonConvert.DeserializeObject(this.Event, type) is DomainEvent @event))
                 {
                     throw new Exception($"Error deserializing event of type {type} with data {Event}");
                 }
