@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using EventSourcing.EventBus;
 using FluentAssertions;
 using Xunit;
 
@@ -86,6 +87,19 @@ namespace EventSourcing.Tests
         }
         
         [Fact]
+        public async Task AddEvents_ShouldAlsoPublishToEventBus()
+        {
+            var testHandler = new TestDomainEventHandler();
+            var sut = this.CreateSut(testHandler);
+
+            var id = Guid.NewGuid().ToString();
+            var newEvent = new TestEventA("user", 100);
+            await sut.AppendToStream(id, 0, new List<DomainEvent> {newEvent});
+
+            testHandler.HandledEvents.Should().Contain(newEvent);
+        }
+
+        [Fact]
         public async Task GetEvents_NoneForThisAggregateButHasOthers_ShouldReturnNothing()
         {
             var sut = this.CreateSut();
@@ -135,9 +149,14 @@ namespace EventSourcing.Tests
             events.Should().HaveCount(2);
         }
 
-        private IEventStore CreateSut()
+        private IEventStore CreateSut(IDomainEventHandler? testEventHandler = null)
         {
-            return new EventStore(new PoorMansAppendOnlyStore(_testDbFilePath));
+            var eventBus = new EventBus.EventBus();
+            if (testEventHandler is not null)
+            {
+                eventBus.Subscribe(testEventHandler);
+            }
+            return new EventStore(new PoorMansAppendOnlyStore(_testDbFilePath), eventBus);
         }
 
         public class TestEventA : DomainEvent
@@ -147,6 +166,21 @@ namespace EventSourcing.Tests
             public TestEventA(string userId, int sequenceNumber) : base(userId)
             {
                 SequenceNumber = sequenceNumber;
+            }
+        }
+
+        public class TestDomainEventHandler : IDomainEventHandler
+        {
+            public List<DomainEvent> HandledEvents { get; private set; }
+
+            public TestDomainEventHandler()
+            {
+                HandledEvents = new List<DomainEvent>();
+            }
+            
+            public void Handle(DomainEvent @event)
+            {
+                HandledEvents.Add(@event);
             }
         }
     }

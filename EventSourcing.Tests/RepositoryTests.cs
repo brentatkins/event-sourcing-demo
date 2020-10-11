@@ -14,7 +14,8 @@ namespace EventSourcing.Tests
         public RepositoryTests()
         {
             string testDbFilePath = Path.Combine(Directory.GetCurrentDirectory(), "TestDb.txt");
-            _eventStore = new EventStore(new PoorMansAppendOnlyStore(testDbFilePath));
+            var eventBus = new EventBus.EventBus();
+            _eventStore = new EventStore(new PoorMansAppendOnlyStore(testDbFilePath), eventBus);
             
             // clear database
             File.WriteAllText(testDbFilePath, string.Empty);

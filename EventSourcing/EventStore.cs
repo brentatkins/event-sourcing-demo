@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EventSourcing.EventBus;
 using Newtonsoft.Json;
 
 namespace EventSourcing
@@ -9,10 +10,12 @@ namespace EventSourcing
     public class EventStore : IEventStore
     {
         private readonly IAppendOnlyStore _store;
+        private IEventBus _eventBus;
 
-        public EventStore(IAppendOnlyStore store)
+        public EventStore(IAppendOnlyStore store, IEventBus eventBus)
         {
             _store = store;
+            _eventBus = eventBus;
         }
 
         public async Task<IEnumerable<DomainEvent>> GetEvents(string id)
@@ -37,6 +40,11 @@ namespace EventSourcing
             {
                 var pastEvents = await this.GetEvents(id);
                 throw new EventStoreConcurrencyException(ex.ExpectedVersion, ex.ActualVersion, pastEvents);
+            }
+            
+            foreach (var domainEvent in events)
+            {
+                _eventBus.Publish(domainEvent);
             }
         }
         
