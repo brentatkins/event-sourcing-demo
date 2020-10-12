@@ -3,7 +3,7 @@ using EventSourcing;
 using EventSourcing.Projections;
 using ShoppingCart.Events;
 
-namespace ShoppingCart.Tests.TempProj
+namespace ShoppingCart.Projections
 {
     public class ShoppingCartProjection : IProjection<ShoppingCartDto>
     {

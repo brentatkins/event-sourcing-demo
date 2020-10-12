@@ -30,7 +30,7 @@ namespace EventSourcing.Tests
 
             public void DoSomething(bool value, string userId)
             {
-                this.RaiseEvent(new SomeTestEventA(userId, value));
+                this.RaiseEvent(new SomeTestEventA(this.Id, userId, value));
             }
             
             public void When(SomeTestEventA @event) { }
@@ -40,7 +40,7 @@ namespace EventSourcing.Tests
         {
             public bool SomeProp { get; }
 
-            public SomeTestEventA(string userId, bool someProp) : base(userId)
+            public SomeTestEventA(string entityId, string userId, bool someProp) : base(entityId, userId)
             {
                 SomeProp = someProp;
             }

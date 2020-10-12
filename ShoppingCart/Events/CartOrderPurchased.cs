@@ -4,7 +4,7 @@ namespace ShoppingCart.Events
 {
     public class CartOrderPurchased : DomainEvent
     {
-        public CartOrderPurchased(string userId) : base(userId)
+        public CartOrderPurchased(string entityId, string userId) : base(entityId, userId)
         {
         }
     }

@@ -6,25 +6,25 @@ using FluentAssertions;
 
 namespace ShoppingCart.Tests
 {
-    public class DomainTest<T> where T : EventSourcedEntity
+    public class DomainTestBase<T> where T : EventSourcedEntity
     {
         private DomainEvent[] _givenEvents = Array.Empty<DomainEvent>();
         private Func<T>? _whenNewEntity;
         private Action<T>? _whenExistingEntity;
 
-        internal DomainTest<T> Given(params DomainEvent[] givenEvents)
+        internal DomainTestBase<T> Given(params DomainEvent[] givenEvents)
         {
             _givenEvents = givenEvents;
             return this;
         }
 
-        internal DomainTest<T> When(Func<T> whenNewEntity)
+        internal DomainTestBase<T> When(Func<T> whenNewEntity)
         {
             _whenNewEntity = whenNewEntity;
             return this;
         }
         
-        internal DomainTest<T> When(Action<T> whenExistingEntity)
+        internal DomainTestBase<T> When(Action<T> whenExistingEntity)
         {
             _whenExistingEntity = whenExistingEntity;
             return this;
@@ -39,7 +39,8 @@ namespace ShoppingCart.Tests
                 .BeEquivalentTo(expectedEvents.ToList(), 
                     cfg => 
                         cfg.RespectingRuntimeTypes()
-                            .Using<DateTime>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, 1000)).When(info => info.SelectedMemberPath.EndsWith("TimeStamp")));
+                            .Using<DateTime>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, 1000))
+                            .When(info => info.SelectedMemberPath.EndsWith("TimeStamp")));
         }
 
         private T GetEntity()
@@ -57,7 +58,7 @@ namespace ShoppingCart.Tests
                         c.GetParameters().First().ParameterType == typeof(string) &&
                         c.GetParameters().Last().ParameterType == typeof(IEnumerable<DomainEvent>));
 
-                var id = Guid.NewGuid().ToString();
+                var id = _givenEvents.First().EntityId;
                 var entity = (T) ctor.Invoke(new object[] {id, _givenEvents.ToList()});
 
                 _whenExistingEntity.Invoke(entity);

@@ -1,3 +1,4 @@
+using System;
 using EventSourcing;
 
 namespace ShoppingCart.Events
@@ -6,7 +7,7 @@ namespace ShoppingCart.Events
     {
         public string CustomerId { get; }
 
-        public ShoppingCartCreated(string userId, string customerId) : base(userId)
+        public ShoppingCartCreated(string entityId, string userId, string customerId) : base(entityId, userId)
         {
             CustomerId = customerId;
         }

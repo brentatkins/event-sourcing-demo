@@ -4,11 +4,11 @@ namespace EventSourcing
 {
     public class DomainEvent
     {
-        public DomainEvent(string userId)
+        public DomainEvent(string entityId, string userId)
         {
             UserId = userId;
             TimeStamp = DateTime.UtcNow;
-            EntityId = string.Empty;
+            EntityId = entityId;
         }
         
         public DateTime TimeStamp { get; }

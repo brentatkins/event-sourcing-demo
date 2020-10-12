@@ -1,9 +1,10 @@
+using System;
 using ShoppingCart.Events;
 using Xunit;
 
 namespace ShoppingCart.Tests
 {
-    public class ShoppingCartDomainTests : DomainTest<ShoppingCart>
+    public class ShoppingCartDomainTests : DomainTestBase<ShoppingCart>
     {
         private readonly string userId = "some user id";
         private readonly string customerId = "some customer id";
@@ -11,9 +12,11 @@ namespace ShoppingCart.Tests
         [Fact]
         public void CreateCart_CartIsCreated()
         {
+            var entityId = Guid.NewGuid().ToString();
+            
             Given()
-                .When(() => ShoppingCart.Create(customerId, userId))
-                .Then(new ShoppingCartCreated(userId, customerId));
+                .When(() => ShoppingCart.Create(entityId, customerId, userId))
+                .Then(new ShoppingCartCreated(entityId, userId, customerId));
         }
         
         [Fact]
@@ -21,10 +24,11 @@ namespace ShoppingCart.Tests
         {
             string productCode = "PRD_CODE";
             int quantity = 10;
+            string entityId = Guid.NewGuid().ToString();
             
-            Given(new ShoppingCartCreated(userId, customerId))
+            Given(new ShoppingCartCreated(entityId, userId, customerId))
                 .When(cart => cart.AddItem(userId, productCode, quantity))
-                .Then(new ItemAddedToCart(userId, productCode, quantity));
+                .Then(new ItemAddedToCart(entityId, userId, productCode, quantity));
         }
     }
 }
