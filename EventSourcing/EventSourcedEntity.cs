@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Microsoft.CSharp.RuntimeBinder;
 
 namespace EventSourcing
 {
@@ -24,7 +25,17 @@ namespace EventSourcing
 
         private void ApplyEvent(DomainEvent @event)
         {
-            ((dynamic) this).When((dynamic)@event);
+            try
+            {
+                ((dynamic) this).When((dynamic) @event);
+            }
+            catch (RuntimeBinderException ex)
+            {
+                if (!ex.Message.Contains("does not contain a definition for 'When'"))
+                {
+                    throw;
+                }
+            }
         }
 
         protected void RaiseEvent(DomainEvent @event)

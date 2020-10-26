@@ -1,4 +1,5 @@
-using System.Collections.Immutable;
+using System;
+using System.Linq;
 using EventSourcing;
 using EventSourcing.Projections;
 using ShoppingCart.Events;
@@ -12,13 +13,11 @@ namespace ShoppingCart.Projections
             var result = (state, @event) switch
             {
                 (null, ShoppingCartCreated created) => 
-                    new ShoppingCartDto(created.CustomerId, ImmutableDictionary<string, int>.Empty),
+                    new ShoppingCartDto(created.EntityId, created.CustomerId, Array.Empty<(string ProductCode, int Quanity)>()),
                 
                 (not null, ItemAddedToCart itemAddedToCart) => 
                     state with {
-                        CartItems = state.CartItems.ContainsKey(itemAddedToCart.ProductCode) 
-                            ? state.CartItems.SetItem(itemAddedToCart.ProductCode, state.CartItems[itemAddedToCart.ProductCode] + itemAddedToCart.Quantity)
-                            : state.CartItems.Add(itemAddedToCart.ProductCode, itemAddedToCart.Quantity)
+                        CartItems = state.CartItems.Append((itemAddedToCart.ProductCode, itemAddedToCart.Quantity)).ToArray()
                     },
                 _ => state
             };
@@ -26,7 +25,4 @@ namespace ShoppingCart.Projections
             return result;
         }
     }
-
-    public record ShoppingCartDto(string CustomerId, ImmutableDictionary<string, int> CartItems)
-        : Dto(CustomerId);
 }

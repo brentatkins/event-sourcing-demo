@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\EventSourcing.Tests\EventSourcing.Tests.csproj" />
       <ProjectReference Include="..\ShoppingCart\ShoppingCart.csproj" />
     </ItemGroup>
 

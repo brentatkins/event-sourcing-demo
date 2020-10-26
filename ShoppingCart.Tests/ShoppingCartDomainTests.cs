@@ -1,4 +1,5 @@
 using System;
+using EventSourcing.Tests.TestHelpers;
 using ShoppingCart.Events;
 using Xunit;
 

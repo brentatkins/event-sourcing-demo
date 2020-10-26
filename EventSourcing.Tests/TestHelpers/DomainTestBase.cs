@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using EventSourcing;
 using FluentAssertions;
 
-namespace ShoppingCart.Tests
+namespace EventSourcing.Tests.TestHelpers
 {
     public class DomainTestBase<T> where T : EventSourcedEntity
     {
@@ -12,33 +11,33 @@ namespace ShoppingCart.Tests
         private Func<T>? _whenNewEntity;
         private Action<T>? _whenExistingEntity;
 
-        internal DomainTestBase<T> Given(params DomainEvent[] givenEvents)
+        public DomainTestBase<T> Given(params DomainEvent[] givenEvents)
         {
             _givenEvents = givenEvents;
             return this;
         }
 
-        internal DomainTestBase<T> When(Func<T> whenNewEntity)
+        public DomainTestBase<T> When(Func<T> whenNewEntity)
         {
             _whenNewEntity = whenNewEntity;
             return this;
         }
         
-        internal DomainTestBase<T> When(Action<T> whenExistingEntity)
+        public DomainTestBase<T> When(Action<T> whenExistingEntity)
         {
             _whenExistingEntity = whenExistingEntity;
             return this;
         }
 
-        internal void Then(params DomainEvent[] expectedEvents)
+        public void Then(params DomainEvent[] expectedEvents)
         {
             var entity = GetEntity();
 
             entity.UncommittedEvents.ToList()
                 .Should()
-                .BeEquivalentTo(expectedEvents.ToList(), 
-                    cfg => 
-                        cfg.RespectingRuntimeTypes()
+                .BeEquivalentTo(expectedEvents.ToList(),
+                    cfg =>
+                        cfg.Using(new MatchTypeEquivalencyStep())
                             .Using<DateTime>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, 1000))
                             .When(info => info.SelectedMemberPath.EndsWith("TimeStamp")));
         }

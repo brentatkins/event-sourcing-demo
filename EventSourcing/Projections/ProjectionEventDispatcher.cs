@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EventSourcing.Projections
@@ -18,7 +19,7 @@ namespace EventSourcing.Projections
         {
             async Task ProjectEvent(DomainEvent @event)
             {
-                var id = @event.EntityId; // :puke
+                var id = @event.EntityId;
                 var dto = await _dtoRepository.GetById<TDto>(id);
 
                 var updatedDto = projection.Project(dto, @event);
@@ -33,12 +34,11 @@ namespace EventSourcing.Projections
             return this;
         }
 
-        public void DispatchEvent(DomainEvent @event)
+        public Task DispatchEvent(DomainEvent @event)
         {
-            foreach (var projectionsHandler in _projectionsHandlers)
-            {
-                projectionsHandler(@event);
-            }
+            var tasks = _projectionsHandlers.Select(handler => handler(@event));
+
+            return Task.WhenAll(tasks);
         }
     }
 }
