@@ -1,16 +1,22 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using EventSourcing.EventBus;
 
 namespace EventSourcing.Projections
 {
     public abstract class LiveProjection<TState> : IDomainEventHandler
     {
-        private TState _state;
+        public TState State { get; private set; }
 
-        public LiveProjection(IEnumerable<DomainEvent> events)
+        public LiveProjection()
         {
-            this._state = this.Replay(events);
+            State = GetEmptyState();
+        }
+
+        public void Hydrate(IEnumerable<DomainEvent> events)
+        {
+            this.State = this.Replay(events);
         }
         
         protected abstract TState Handle(TState state, DomainEvent @event);
@@ -24,7 +30,7 @@ namespace EventSourcing.Projections
         
         public void Handle(DomainEvent @event)
         {
-            this._state = this.Handle(_state, @event);
+            this.State = this.Handle(this.State, @event);
         }
     }
 }

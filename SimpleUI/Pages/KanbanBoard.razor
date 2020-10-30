@@ -1,0 +1,81 @@
+@page "/kanbanboard"
+
+@using SimpleUI.Data
+@using Kanban.Projections
+@inject KanbanBoardService KanbanBoardService
+
+<div class="container-fluid">
+    <div class="row">
+            <div class="col">
+                <h1>Kanban Board</h1>
+            </div>
+        </div>
+
+    @* <div class="container-fluid"> *@
+        <div class="row">
+            <div class="col">
+                <Swimlane Title="Backlog" StoryType=@Story.StoryType.Backlog Items="_kanbanBoardState.Backlog" AllowAdd="true" OnNewStoryCreate="@CreateNewStory" DisableMoveTo="true"></Swimlane>
+            </div>
+            <div class="col">
+                <Swimlane Title="In Progress" StoryType=@Story.StoryType.InProgress Items="_kanbanBoardState.InProgress" OnStoryMove="@MoveToInProgress"></Swimlane>
+            </div>
+            <div class="col">
+                <Swimlane Title="Under Review" StoryType=@Story.StoryType.UnderReview Items="_kanbanBoardState.UnderReview" OnStoryMove="@MoveToUnderReview"></Swimlane>
+            </div>
+            <div class="col">
+                <Swimlane Title="Ready For Deploy" StoryType=@Story.StoryType.ReadyForDevelopment Items="_kanbanBoardState.ReadyForDeployment" OnStoryMove="@MoveToReadyForDeployment"></Swimlane>
+            </div>
+            <div class="col">
+                <Swimlane Title="Done" StoryType=@Story.StoryType.Done Items="_kanbanBoardState.Done" OnStoryMove="@MoveToDone"></Swimlane>
+            </div>
+        </div>
+    @* </div> *@
+</div>
+
+@code {
+    private KanbanBoardDto _kanbanBoardState;
+
+    protected override Task OnInitializedAsync()
+    {
+        _kanbanBoardState = KanbanBoardService.GetBoardState();
+        
+        return Task.CompletedTask;
+    }
+
+    private async Task CreateNewStory(string title)
+    {
+        await this.KanbanBoardService.CreateStory(title);
+        RefreshBoard();
+    }
+
+    private async Task MoveToInProgress(StoryDto story)
+    {
+        await this.KanbanBoardService.MoveToInProgress(story.Id);
+        RefreshBoard();
+    }
+    
+    private async Task MoveToUnderReview(StoryDto story)
+    {
+        await this.KanbanBoardService.MoveToUnderReview(story.Id);
+        RefreshBoard();
+    }
+    
+    private async Task MoveToReadyForDeployment(StoryDto story)
+    {
+        await this.KanbanBoardService.MoveToReadyForDeployment(story.Id);
+        RefreshBoard();
+    }
+
+    private async Task MoveToDone(StoryDto story)
+    {
+        await this.KanbanBoardService.MoveToDone(story.Id);
+        RefreshBoard();
+    }
+    
+    private void RefreshBoard()
+    {
+        _kanbanBoardState = KanbanBoardService.GetBoardState();
+        
+        StateHasChanged();
+    }
+}

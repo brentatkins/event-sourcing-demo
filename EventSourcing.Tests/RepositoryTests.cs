@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using EventSourcing.EventBus;
 using FluentAssertions;
 using Xunit;
 
@@ -14,7 +15,7 @@ namespace EventSourcing.Tests
         public RepositoryTests()
         {
             string testDbFilePath = Path.Combine(Directory.GetCurrentDirectory(), "TestDb.txt");
-            var eventBus = new EventBus.EventBus();
+            var eventBus = new EventBus.EventBus(new List<IDomainEventHandler>());
             _eventStore = new EventStore(new PoorMansAppendOnlyStore(testDbFilePath), eventBus);
             
             // clear database

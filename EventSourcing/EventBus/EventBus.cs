@@ -7,6 +7,14 @@ namespace EventSourcing.EventBus
         private readonly List<IDomainEventHandler> _handlers
             = new List<IDomainEventHandler>();
 
+        public EventBus(IEnumerable<IDomainEventHandler> handlers)
+        {
+            foreach (var domainEventHandler in handlers)
+            {
+                Subscribe(domainEventHandler);
+            }
+        }
+        
         public void Publish(DomainEvent @event)
         {
             foreach (var handler in _handlers)
@@ -15,7 +23,7 @@ namespace EventSourcing.EventBus
             }
         }
 
-        public void Subscribe(IDomainEventHandler handler)
+        private void Subscribe(IDomainEventHandler handler)
         {
             _handlers.Add(handler);
         }

@@ -7,6 +7,8 @@ namespace EventSourcing
     {
         Task<IEnumerable<string>> GetEvents(string id);
         
+        Task<IEnumerable<string>> GetAllEvents();
+        
         Task AppendToStream(string id, int expectedVersion, ICollection<string> events);
     }
 }

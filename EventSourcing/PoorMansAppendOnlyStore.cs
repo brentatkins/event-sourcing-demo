@@ -29,6 +29,19 @@ namespace EventSourcing
 
             return Task.FromResult(events);
         }
+        
+        public Task<IEnumerable<string>> GetAllEvents()
+        {
+            string[] lines = File.ReadAllLines(_filePath);
+
+            var wrappedEvents = lines.Select(this.DeserializeEvent).ToList();
+            
+            var events = wrappedEvents
+                .Select(x => x.EventData)
+                .AsEnumerable();
+
+            return Task.FromResult(events);
+        }
 
         public Task AppendToStream(string id, int expectedVersion, ICollection<string> events)
         {

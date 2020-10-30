@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace EventSourcing
 {
-    public class EventSourcedRepository
+    public class EventSourcedRepository : IEntityRepository
     {
         private readonly IEventStore _store;
 

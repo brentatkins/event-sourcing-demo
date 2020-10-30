@@ -25,6 +25,14 @@ namespace EventSourcing
             
             return events;
         }
+        
+        public async Task<IEnumerable<DomainEvent>> GetAllEvents()
+        {
+            var eventData = await _store.GetAllEvents();
+            var events = eventData.Select(this.DeserializeEvent);
+            
+            return events;
+        }
 
         public async Task AppendToStream(string id, int expectedVersion, ICollection<DomainEvent> events)
         {

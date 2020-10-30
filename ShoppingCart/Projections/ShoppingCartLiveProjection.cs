@@ -10,7 +10,7 @@ namespace ShoppingCart.Projections
 {
     public class ShoppingCartLiveProjection : LiveProjection<ApplicationState>
     {
-        public ShoppingCartLiveProjection(IEnumerable<DomainEvent> events) : base(events)
+        public ShoppingCartLiveProjection() : base()
         {
         }
         

@@ -1,0 +1,79 @@
+@using Kanban.Projections
+@using Plk.Blazor.DragDrop
+
+<div class="p-3 mb-5 bg-white h-100 border border-@GetStoryColorClass()">
+    <h4 class="pb-3 text-@GetStoryColorClass()">@Title</h4>
+
+    @if (AllowAdd)
+    {
+        <div class="card bg-light mb-3">
+            <div class="card-header text-@GetStoryColorClass()">Create New Story</div>
+            <div class="card-body">
+                <div class="input-group mb-3">
+                    <input id="newStoryTitle" type="text" @bind="_newStory" class="form-control" placeholder="New story title" aria-label="New story title" aria-describedby="button-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" type="button" id="button-addon2" @onclick="CreateStory" disabled=@DisableCreate>Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <Dropzone Class="h-100" Items="Items.OrderByDescending(x => x.DateCreated).ToList()" TItem="StoryDto" OnItemDrop="@OnItemDrop" MaxItems="DisableMoveTo ? 0 : 200">
+        <Story Item="@context" Type=@StoryType></Story>
+    </Dropzone>
+</div>
+
+@code {
+    private string _newStory;
+
+    private bool _isCreating;
+
+    private bool DisableCreate => _isCreating || string.IsNullOrWhiteSpace(_newStory);
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public bool AllowAdd { get; set; }
+
+    [Parameter]
+    public IList<StoryDto> Items { get; set; }
+
+    [Parameter]
+    public Func<string, Task> OnNewStoryCreate { get; set; }
+    
+    [Parameter]
+    public Func<StoryDto, Task> OnStoryMove { get; set; }
+    
+    [Parameter]
+    public bool DisableMoveTo { get; set; }
+    
+    [Parameter]
+    public Story.StoryType StoryType { get; set; }
+
+    public async Task CreateStory()
+    {
+        _isCreating = true;
+
+        await this.OnNewStoryCreate(_newStory);
+
+        _isCreating = false;
+    }
+
+    private void OnItemDrop(StoryDto story)
+    {
+        Console.WriteLine("Some content logged in Blazor App output window");
+        this.OnStoryMove(story);
+    }
+
+    private string GetStoryColorClass() => StoryType switch{
+        
+        Story.StoryType.Backlog => "primary",
+        Story.StoryType.InProgress => "success",
+        Story.StoryType.UnderReview => "info",
+        Story.StoryType.ReadyForDevelopment => "danger",
+        Story.StoryType.Done => "dark",
+        _ => throw new NotSupportedException("invalid story type")};
+
+}

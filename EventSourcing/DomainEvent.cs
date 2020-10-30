@@ -7,11 +7,10 @@ namespace EventSourcing
         public DomainEvent(string entityId, string userId)
         {
             UserId = userId;
-            TimeStamp = DateTime.UtcNow;
             EntityId = entityId;
         }
         
-        public DateTime TimeStamp { get; }
+        public DateTime TimeStamp { get; set; }
 
         public string UserId { get; }
         

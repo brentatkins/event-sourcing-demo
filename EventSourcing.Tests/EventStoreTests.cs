@@ -151,11 +151,13 @@ namespace EventSourcing.Tests
 
         private IEventStore CreateSut(IDomainEventHandler? testEventHandler = null)
         {
-            var eventBus = new EventBus.EventBus();
+            var handlers = new List<IDomainEventHandler>();
             if (testEventHandler is not null)
             {
-                eventBus.Subscribe(testEventHandler);
+                handlers.Add(testEventHandler);
             }
+
+            var eventBus = new EventBus.EventBus(handlers);
             return new EventStore(new PoorMansAppendOnlyStore(_testDbFilePath), eventBus);
         }
 

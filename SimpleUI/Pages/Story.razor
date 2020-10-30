@@ -1,0 +1,33 @@
+@using Kanban.Projections
+<div class="card text-white mb-3 @GetBGColorClass()">
+  <div class="card-body">
+      <h5 class="card-title">@Item.Title</h5>
+      <p class="card-text"><small>Created on @Item.DateCreated.ToString("g")</small></p>
+  </div>
+</div>
+
+@code {
+    [Parameter]
+    public StoryDto Item { get; set; }
+    
+    [Parameter]
+    public StoryType Type { get; set; } 
+    
+    public enum StoryType
+    {
+        Backlog,
+        InProgress,
+        UnderReview,
+        ReadyForDevelopment,
+        Done
+    }
+
+    private string GetBGColorClass() => this.Type switch{
+        StoryType.Backlog => "bg-primary",
+        StoryType.InProgress => "bg-success",
+        StoryType.UnderReview => "bg-info",
+        StoryType.ReadyForDevelopment => "bg-danger",
+        StoryType.Done => "bg-dark",
+        _ => throw new NotSupportedException("Invalid story type")};
+
+}
