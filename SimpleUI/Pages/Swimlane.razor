@@ -4,7 +4,7 @@
 <div class="p-3 mb-5 bg-white h-100 border border-@GetStoryColorClass()">
     <h4 class="pb-3 text-@GetStoryColorClass()">@Title</h4>
 
-    @if (AllowAdd)
+    @if (CanCreateStory)
     {
         <div class="card bg-light mb-3">
             <div class="card-header text-@GetStoryColorClass()">Create New Story</div>
@@ -35,7 +35,7 @@
     public string Title { get; set; }
 
     [Parameter]
-    public bool AllowAdd { get; set; }
+    public bool CanCreateStory { get; set; }
 
     [Parameter]
     public IList<StoryDto> Items { get; set; }

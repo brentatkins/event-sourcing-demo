@@ -14,7 +14,7 @@
     @* <div class="container-fluid"> *@
         <div class="row">
             <div class="col">
-                <Swimlane Title="Backlog" StoryType=@Story.StoryType.Backlog Items="_kanbanBoardState.Backlog" AllowAdd="true" OnNewStoryCreate="@CreateNewStory" DisableMoveTo="true"></Swimlane>
+                <Swimlane Title="Backlog" StoryType=@Story.StoryType.Backlog Items="_kanbanBoardState.Backlog" CanCreateStory="true" OnNewStoryCreate="@CreateNewStory" DisableMoveTo="true"></Swimlane>
             </div>
             <div class="col">
                 <Swimlane Title="In Progress" StoryType=@Story.StoryType.InProgress Items="_kanbanBoardState.InProgress" OnStoryMove="@MoveToInProgress"></Swimlane>
