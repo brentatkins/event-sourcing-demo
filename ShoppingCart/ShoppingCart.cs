@@ -11,23 +11,19 @@ namespace ShoppingCart
         {
         }
 
-        private ShoppingCart(string id, IEnumerable<DomainEvent> pastEvents, string customerId, string userId) : base(id, pastEvents)
+        private ShoppingCart(string id, IEnumerable<DomainEvent> pastEvents, string customerId) : base(id, pastEvents)
         {
-            RaiseEvent(new ShoppingCartCreated(this.Id, userId, customerId));
+            RaiseEvent(new ShoppingCartCreated(this.Id, customerId));
         }
         
-        public static ShoppingCart Create(string entityId, string customerId, string userId)
+        public static ShoppingCart Create(string entityId, string customerId)
         {
-            return new ShoppingCart(entityId, new List<DomainEvent>(), customerId, userId);
+            return new ShoppingCart(entityId, new List<DomainEvent>(), customerId);
         }
 
-        public void AddItem(string userId, string producCode, int quantity)
+        public void AddItem(string producCode, int quantity)
         {
-            RaiseEvent(new ItemAddedToCart(this.Id, userId, producCode, quantity));
+            RaiseEvent(new ItemAddedToCart(this.Id, producCode, quantity));
         }
-
-        public void When(ShoppingCartCreated @event) { }
-        
-        public void When(ItemAddedToCart @event) { }
     }
 }

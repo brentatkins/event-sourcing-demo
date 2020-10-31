@@ -23,7 +23,7 @@ namespace SimpleUI.Data
             var newId = ShortId.Generate(new GenerationOptions
                 {UseNumbers = false, UseSpecialCharacters = false, Length = 8});
 
-            var newStory = Story.Create(title, newId, "user 1");
+            var newStory = Story.Create(title, newId);
 
             await _entityRepository.Save(newStory);
         }
@@ -36,7 +36,7 @@ namespace SimpleUI.Data
         public async Task MoveToInProgress(string storyId)
         {
             var story = await _entityRepository.Get<Story>(storyId);
-            story.MoveToInProgress("user 1");
+            story.MoveToInProgress();
 
             await _entityRepository.Save(story);
         }
@@ -44,7 +44,7 @@ namespace SimpleUI.Data
         public async Task MoveToUnderReview(string storyId)
         {
             var story = await _entityRepository.Get<Story>(storyId);
-            story.MoveToInReview("user 1");
+            story.MoveToInReview();
 
             await _entityRepository.Save(story);
         }
@@ -52,7 +52,7 @@ namespace SimpleUI.Data
         public async Task MoveToReadyForDeployment(string storyId)
         {
             var story = await _entityRepository.Get<Story>(storyId);
-            story.MoveToReadyForDeployment("user 1");
+            story.MoveToReadyForDeployment();
 
             await _entityRepository.Save(story);
         }
@@ -60,7 +60,7 @@ namespace SimpleUI.Data
         public async Task MoveToDone(string storyId)
         {
             var story = await _entityRepository.Get<Story>(storyId);
-            story.MoveToDone("user 1");
+            story.MoveToDone();
 
             await _entityRepository.Save(story);
         }

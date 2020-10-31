@@ -6,7 +6,7 @@ namespace Kanban.Events
     {
         public string Title { get; }
 
-        public StoryCreated(string title, string entityId, string userId) : base(entityId, userId)
+        public StoryCreated(string title, string entityId) : base(entityId)
         {
             Title = title;
         }
@@ -14,29 +14,26 @@ namespace Kanban.Events
     
     public class StoryMovedToInProgress : DomainEvent
     {
-        public StoryMovedToInProgress(string entityId, string userId) : base(entityId, userId)
-        {
-        }
+        public StoryMovedToInProgress(string entityId) : base(entityId) { }
     }
 
     public class StoryMovedToInReview : DomainEvent
     {
-        public StoryMovedToInReview(string entityId, string userId) : base(entityId, userId)
-        {
-        }
+        public StoryMovedToInReview(string entityId) : base(entityId) { }
     }
 
     public class StoryMovedToReadyForDeployment : DomainEvent
     {
-        public StoryMovedToReadyForDeployment(string entityId, string userId) : base(entityId, userId)
-        {
-        }
+        public StoryMovedToReadyForDeployment(string entityId) : base(entityId) { }
     }
     
     public class StoryMovedToDone : DomainEvent
     {
-        public StoryMovedToDone(string entityId, string userId) : base(entityId, userId)
-        {
-        }
+        public StoryMovedToDone(string entityId) : base(entityId) { }
+    }
+
+    public class StoryDeleted : DomainEvent
+    {
+        public StoryDeleted(string entityId) : base(entityId) { }
     }
 }

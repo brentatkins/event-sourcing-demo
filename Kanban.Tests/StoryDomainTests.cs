@@ -7,8 +7,6 @@ namespace Kanban.Tests
 {
     public class StoryDomainTests : DomainTestBase<Story>
     {
-        private readonly string userId = "some user id";
-
         [Fact]
         public void CreateStory_StoryIsCreated()
         {
@@ -16,8 +14,8 @@ namespace Kanban.Tests
             const string title = "Some story title";
 
             Given()
-                .When(() => Story.Create(title, entityId, userId))
-                .Then(new StoryCreated(title, entityId, userId));
+                .When(() => Story.Create(title, entityId))
+                .Then(new StoryCreated(title, entityId));
         }
 
         [Fact]
@@ -26,9 +24,9 @@ namespace Kanban.Tests
             var entityId = Guid.NewGuid().ToString();
             const string title = "Some story title";
 
-            Given(new StoryCreated(title, entityId, userId))
-                .When((story) => story.MoveToInProgress(userId))
-                .Then(new StoryMovedToInProgress(entityId, userId));
+            Given(new StoryCreated(title, entityId))
+                .When((story) => story.MoveToInProgress())
+                .Then(new StoryMovedToInProgress(entityId));
         }
         
         [Fact]
@@ -37,10 +35,10 @@ namespace Kanban.Tests
             var entityId = Guid.NewGuid().ToString();
             const string title = "Some story title";
 
-            Given(new StoryCreated(title, entityId, userId),
-                new StoryMovedToInProgress(entityId, userId))
-                .When((story) => story.MoveToInReview(userId))
-                .Then(new StoryMovedToInReview(entityId, userId));
+            Given(new StoryCreated(title, entityId),
+                new StoryMovedToInProgress(entityId))
+                .When((story) => story.MoveToInReview())
+                .Then(new StoryMovedToInReview(entityId));
         }
         
         [Fact]
@@ -49,11 +47,11 @@ namespace Kanban.Tests
             var entityId = Guid.NewGuid().ToString();
             const string title = "Some story title";
 
-            Given(new StoryCreated(title, entityId, userId),
-                    new StoryMovedToInProgress(entityId, userId),
-                    new StoryMovedToInReview(entityId, userId))
-                .When((story) => story.MoveToReadyForDeployment(userId))
-                .Then(new StoryMovedToReadyForDeployment(entityId, userId));
+            Given(new StoryCreated(title, entityId),
+                    new StoryMovedToInProgress(entityId),
+                    new StoryMovedToInReview(entityId))
+                .When((story) => story.MoveToReadyForDeployment())
+                .Then(new StoryMovedToReadyForDeployment(entityId));
         }
         
         [Fact]
@@ -62,12 +60,23 @@ namespace Kanban.Tests
             var entityId = Guid.NewGuid().ToString();
             const string title = "Some story title";
 
-            Given(new StoryCreated(title, entityId, userId),
-                    new StoryMovedToInProgress(entityId, userId),
-                    new StoryMovedToInReview(entityId, userId),
-                    new StoryMovedToReadyForDeployment(entityId, userId))
-                .When((story) => story.MoveToDone(userId))
-                .Then(new StoryMovedToDone(entityId, userId));
+            Given(new StoryCreated(title, entityId),
+                    new StoryMovedToInProgress(entityId),
+                    new StoryMovedToInReview(entityId),
+                    new StoryMovedToReadyForDeployment(entityId))
+                .When((story) => story.MoveToDone())
+                .Then(new StoryMovedToDone(entityId));
+        }
+        
+        [Fact]
+        public void DeleteStory_ShouldDeleteStory()
+        {
+            var entityId = Guid.NewGuid().ToString();
+            const string title = "Some story title";
+
+            Given(new StoryCreated(title, entityId))
+                .When(story => story.Delete())
+                .Then(new StoryDeleted(entityId));
         }
     }
 }

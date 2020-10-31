@@ -7,7 +7,6 @@ namespace ShoppingCart.Tests
 {
     public class ShoppingCartDomainTests : DomainTestBase<ShoppingCart>
     {
-        private readonly string userId = "some user id";
         private readonly string customerId = "some customer id";
 
         [Fact]
@@ -16,8 +15,8 @@ namespace ShoppingCart.Tests
             var entityId = Guid.NewGuid().ToString();
             
             Given()
-                .When(() => ShoppingCart.Create(entityId, customerId, userId))
-                .Then(new ShoppingCartCreated(entityId, userId, customerId));
+                .When(() => ShoppingCart.Create(entityId, customerId))
+                .Then(new ShoppingCartCreated(entityId, customerId));
         }
         
         [Fact]
@@ -27,9 +26,9 @@ namespace ShoppingCart.Tests
             int quantity = 10;
             string entityId = Guid.NewGuid().ToString();
             
-            Given(new ShoppingCartCreated(entityId, userId, customerId))
-                .When(cart => cart.AddItem(userId, productCode, quantity))
-                .Then(new ItemAddedToCart(entityId, userId, productCode, quantity));
+            Given(new ShoppingCartCreated(entityId, customerId))
+                .When(cart => cart.AddItem(productCode, quantity))
+                .Then(new ItemAddedToCart(entityId, productCode, quantity));
         }
     }
 }

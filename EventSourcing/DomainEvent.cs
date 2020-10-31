@@ -2,18 +2,16 @@ using System;
 
 namespace EventSourcing
 {
-    public class DomainEvent
+    public abstract class DomainEvent
     {
-        public DomainEvent(string entityId, string userId)
+        protected DomainEvent(string entityId)
         {
-            UserId = userId;
             EntityId = entityId;
+            TimeStamp = DateTime.UtcNow;
         }
-        
+
         public DateTime TimeStamp { get; set; }
 
-        public string UserId { get; }
-        
-        public string EntityId { get; internal set; }
+        public string EntityId { get; set; }
     }
 }

@@ -42,7 +42,6 @@ namespace EventSourcing
         protected void RaiseEvent(DomainEvent @event)
         {
             @event.EntityId = Id;
-            @event.TimeStamp = DateTime.UtcNow;
             _uncommittedEvents.Add(@event);
             ApplyEvent(@event);
         }

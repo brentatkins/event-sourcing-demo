@@ -43,8 +43,8 @@ namespace EventSourcing.Tests
 
             await _eventStore.AppendToStream(id, 0, new List<DomainEvent>
             {
-                new TestEvent(id, "user", true),
-                new TestEvent(id, "user", true)
+                new TestEvent(id, true),
+                new TestEvent(id, true)
             });
 
             var entity = await sut.Get<TestEntity>(id);
@@ -113,7 +113,7 @@ namespace EventSourcing.Tests
 
             public void DoSomething()
             {
-                RaiseEvent(new TestEvent(this.Id, "user", true));
+                RaiseEvent(new TestEvent(this.Id, true));
             }
 
             public void When(TestEvent @event)
@@ -126,7 +126,7 @@ namespace EventSourcing.Tests
         {
             public bool SomeProp { get; }
 
-            public TestEvent(string entityId, string userId, bool someProp) : base(entityId, userId)
+            public TestEvent(string entityId, bool someProp) : base(entityId)
             {
                 SomeProp = someProp;
             }

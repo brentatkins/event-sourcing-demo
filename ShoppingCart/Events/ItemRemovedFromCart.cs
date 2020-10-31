@@ -7,7 +7,7 @@ namespace ShoppingCart.Events
         public string ProductCode { get; }
         public int Quantity { get; }
 
-        public ItemRemovedFromCart(string entityId, string userId, string productCode, int quantity) : base(entityId, userId)
+        public ItemRemovedFromCart(string entityId, string productCode, int quantity) : base(entityId)
         {
             ProductCode = productCode;
             Quantity = quantity;

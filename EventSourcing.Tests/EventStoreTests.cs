@@ -37,7 +37,7 @@ namespace EventSourcing.Tests
             var sut = this.CreateSut();
 
             var id = Guid.NewGuid().ToString();
-            var newEvent = new TestEventA(id, "user", 100);
+            var newEvent = new TestEventA(id, 100);
             await sut.AppendToStream(id, 0, new List<DomainEvent> {newEvent});
             
             var events = (await sut.GetEvents(id)).ToList();
@@ -51,11 +51,11 @@ namespace EventSourcing.Tests
             var sut = this.CreateSut();
         
             var id = Guid.NewGuid().ToString();
-            var event1 = new TestEventA(id, "user", 100);
-            var event2 = new TestEventA(id, "user", 200);
+            var event1 = new TestEventA(id, 100);
+            var event2 = new TestEventA(id, 200);
             await sut.AppendToStream(id, 0, new List<DomainEvent> {event1, event2});
             
-            var newEvent = new TestEventA(id, "user", 300);
+            var newEvent = new TestEventA(id, 300);
             await sut.AppendToStream(id, 2, new List<DomainEvent> {newEvent});
             
             var events = (await sut.GetEvents(id)).ToList();
@@ -72,11 +72,11 @@ namespace EventSourcing.Tests
             var sut = this.CreateSut();
         
             var id = Guid.NewGuid().ToString();
-            var event1 = new TestEventA(id, "user", 100);
-            var event2 = new TestEventA(id, "user", 200);
+            var event1 = new TestEventA(id, 100);
+            var event2 = new TestEventA(id, 200);
             await sut.AppendToStream(id, 0, new List<DomainEvent> {event1, event2});
             
-            var newEvent = new TestEventA(id, "user", 300);
+            var newEvent = new TestEventA(id, 300);
             
             Func<Task> act = async () => await sut.AppendToStream(id, 0, new List<DomainEvent> {newEvent});
 
@@ -93,7 +93,7 @@ namespace EventSourcing.Tests
             var sut = this.CreateSut(testHandler);
 
             var id = Guid.NewGuid().ToString();
-            var newEvent = new TestEventA(id, "user", 100);
+            var newEvent = new TestEventA(id, 100);
             await sut.AppendToStream(id, 0, new List<DomainEvent> {newEvent});
 
             testHandler.HandledEvents.Should().Contain(newEvent);
@@ -105,8 +105,8 @@ namespace EventSourcing.Tests
             var sut = this.CreateSut();
         
             var id = Guid.NewGuid().ToString();
-            var event1 = new TestEventA(id, "user", 100);
-            var event2 = new TestEventA(id, "user", 200);
+            var event1 = new TestEventA(id, 100);
+            var event2 = new TestEventA(id, 200);
             await sut.AppendToStream(id, 0, new List<DomainEvent> {event1, event2});
             
             var idWithNoEvents = Guid.NewGuid().ToString();
@@ -121,8 +121,8 @@ namespace EventSourcing.Tests
             var sut = this.CreateSut();
         
             var id = Guid.NewGuid().ToString();
-            var event1 = new TestEventA(id, "user", 100);
-            var event2 = new TestEventA(id, "user", 200);
+            var event1 = new TestEventA(id, 100);
+            var event2 = new TestEventA(id, 200);
             await sut.AppendToStream(id, 0, new List<DomainEvent> {event1, event2});
             
             var events = (await sut.GetEvents(id)).ToList();
@@ -136,12 +136,12 @@ namespace EventSourcing.Tests
             var sut = this.CreateSut();
         
             var id = Guid.NewGuid().ToString();
-            var event1 = new TestEventA(id, "user", 100);
-            var event2 = new TestEventA(id, "user", 200);
+            var event1 = new TestEventA(id, 100);
+            var event2 = new TestEventA(id, 200);
             await sut.AppendToStream(id, 0, new List<DomainEvent> {event1, event2});
             
             var otherId = Guid.NewGuid().ToString();
-            var otherEvent1 = new TestEventA(otherId , "user", 300);
+            var otherEvent1 = new TestEventA(otherId, 300);
             await sut.AppendToStream(otherId, 0, new List<DomainEvent> {otherEvent1});
             
             var events = (await sut.GetEvents(id)).ToList();
@@ -165,7 +165,7 @@ namespace EventSourcing.Tests
         {
             public int SequenceNumber { get; }
 
-            public TestEventA(string entityId, string userId, int sequenceNumber) : base(entityId, userId)
+            public TestEventA(string entityId, int sequenceNumber) : base(entityId)
             {
                 SequenceNumber = sequenceNumber;
             }

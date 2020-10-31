@@ -14,10 +14,9 @@ namespace ShoppingCart.Tests
         public void ShoppingCartCreated_ShouldCreateCard()
         {
             var id = "some id";
-            var userId = "some user id";
             var customerId = "some customer id";
             
-            this.Given(new ShoppingCartCreated(id, userId, customerId))
+            this.Given(new ShoppingCartCreated(id, customerId))
                 .Then(new ShoppingCartDto(id, customerId, Array.Empty<(string ProductCode, int Quanity)>()));
         }
         
@@ -25,13 +24,12 @@ namespace ShoppingCart.Tests
         public void ItemAddedToCart_NotAddedBefore_ShouldBeInCart()
         {
             var id = "999";
-            var userId = "user1";
             var customerId = "cust1";
             var productCode = "prod1";
             var quantity = 10;
 
-            this.Given(new ShoppingCartCreated(id, userId, customerId),
-                    new ItemAddedToCart(id, userId, productCode, quantity))
+            this.Given(new ShoppingCartCreated(id, customerId),
+                    new ItemAddedToCart(id, productCode, quantity))
                 .Then(id, cart =>
                 {
                     cart.Should().NotBeNull();

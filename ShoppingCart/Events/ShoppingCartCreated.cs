@@ -7,7 +7,7 @@ namespace ShoppingCart.Events
     {
         public string CustomerId { get; }
 
-        public ShoppingCartCreated(string entityId, string userId, string customerId) : base(entityId, userId)
+        public ShoppingCartCreated(string entityId, string customerId) : base(entityId)
         {
             CustomerId = customerId;
         }

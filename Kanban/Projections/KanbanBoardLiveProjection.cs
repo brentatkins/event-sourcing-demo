@@ -12,7 +12,7 @@ namespace Kanban.Projections
         {
             return @event switch
             {
-                StoryCreated storyCreated => state with{ Stories =
+                StoryCreated storyCreated => state with { Stories =
                     state.Stories.Add((KanbanBoardDto.StoryStatus.Backlog,
                         new StoryDto(storyCreated.EntityId, storyCreated.Title, storyCreated.TimeStamp)))},
 
@@ -28,6 +28,9 @@ namespace Kanban.Projections
                 StoryMovedToDone storyMovedToDone => this.MoveStoryToStatus(state, storyMovedToDone.EntityId,
                     KanbanBoardDto.StoryStatus.Done),
 
+                StoryDeleted storyDeleted => state with { Stories =
+                    state.Stories.RemoveAll(s => s.Story.Id == storyDeleted.EntityId)},
+
                 _ => state
             };
         }
@@ -41,7 +44,6 @@ namespace Kanban.Projections
                     _ => tuple
                 }
             );
-                
 
             return state with {Stories = newStories.ToImmutableArray()};
         }

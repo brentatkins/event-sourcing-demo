@@ -16,7 +16,7 @@ namespace EventSourcing.Tests
             var someEntity = new SomeTestEntity(entityId, new List<DomainEvent>());
             
             // act
-            someEntity.DoSomething(true, "a user");
+            someEntity.DoSomething(true);
 
             // assert
             someEntity.UncommittedEvents.Select(x => x.EntityId).Should().BeEquivalentTo(entityId);
@@ -28,9 +28,9 @@ namespace EventSourcing.Tests
             {
             }
 
-            public void DoSomething(bool value, string userId)
+            public void DoSomething(bool value)
             {
-                this.RaiseEvent(new SomeTestEventA(this.Id, userId, value));
+                this.RaiseEvent(new SomeTestEventA(this.Id, value));
             }
             
             public void When(SomeTestEventA @event) { }
@@ -40,7 +40,7 @@ namespace EventSourcing.Tests
         {
             public bool SomeProp { get; }
 
-            public SomeTestEventA(string entityId, string userId, bool someProp) : base(entityId, userId)
+            public SomeTestEventA(string entityId, bool someProp) : base(entityId)
             {
                 SomeProp = someProp;
             }
