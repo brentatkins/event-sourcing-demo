@@ -1,18 +1,31 @@
 @using Kanban.Projections
-<div class="card text-white mb-3 @GetBGColorClass()">
-  <div class="card-body">
-      <h5 class="card-title">@Item.Title</h5>
-      <p class="card-text"><small>Created on @Item.DateCreated.ToString("g")</small></p>
-  </div>
+<div class="card text-white mb-3 bg-@GetBGColorClass()" style="transition: height 1s">
+    <div class="card-body">
+        <h5 class="card-title">@Item.Title</h5>
+        <p class="card-text">
+            <small>Created on @Item.DateCreated.ToString("g")</small>
+        </p>
+        <div class="text-right">
+            <button class="btn btn-secondary btn-sm bg-transparent text-white border-white" @onclick="HandleDeleteClick">
+                <i class="oi oi-trash"></i>
+            </button>
+        </div>
+    </div>
 </div>
 
 @code {
+
     [Parameter]
     public StoryDto Item { get; set; }
-    
+
     [Parameter]
-    public StoryType Type { get; set; } 
-    
+    public StoryType Type { get; set; }
+
+    [Parameter]
+    public Func<string, Task> DeleteStory { get; set; }
+
+    private bool _showDelete;
+
     public enum StoryType
     {
         Backlog,
@@ -23,11 +36,16 @@
     }
 
     private string GetBGColorClass() => this.Type switch{
-        StoryType.Backlog => "bg-primary",
-        StoryType.InProgress => "bg-success",
-        StoryType.UnderReview => "bg-info",
-        StoryType.ReadyForDevelopment => "bg-danger",
-        StoryType.Done => "bg-dark",
+        StoryType.Backlog => "primary",
+        StoryType.InProgress => "success",
+        StoryType.UnderReview => "info",
+        StoryType.ReadyForDevelopment => "danger",
+        StoryType.Done => "dark",
         _ => throw new NotSupportedException("Invalid story type")};
+
+    private void HandleDeleteClick()
+    {
+        DeleteStory(Item.Id);
+    }
 
 }

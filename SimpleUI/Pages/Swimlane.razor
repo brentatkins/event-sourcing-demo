@@ -20,7 +20,7 @@
     }
 
     <Dropzone Class="h-100" Items="Items.OrderByDescending(x => x.DateCreated).ToList()" TItem="StoryDto" OnItemDrop="@OnItemDrop" MaxItems="DisableMoveTo ? 0 : 200">
-        <Story Item="@context" Type=@StoryType></Story>
+        <Story Item="@context" Type=@StoryType DeleteStory="@DeleteStory"></Story>
     </Dropzone>
 </div>
 
@@ -51,6 +51,9 @@
     
     [Parameter]
     public Story.StoryType StoryType { get; set; }
+    
+    [Parameter]
+    public Func<string, Task> DeleteStory { get; set; }
 
     public async Task CreateStory()
     {

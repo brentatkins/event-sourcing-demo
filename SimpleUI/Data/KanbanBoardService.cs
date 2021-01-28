@@ -64,5 +64,13 @@ namespace SimpleUI.Data
 
             await _entityRepository.Save(story);
         }
+
+        public async Task DeleteStory(string storyId)
+        {
+            var story = await _entityRepository.Get<Story>(storyId);
+            story.Delete();
+
+            await _entityRepository.Save(story);
+        }
     }
 }

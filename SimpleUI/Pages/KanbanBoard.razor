@@ -14,19 +14,19 @@
     @* <div class="container-fluid"> *@
         <div class="row">
             <div class="col">
-                <Swimlane Title="Backlog" StoryType=@Story.StoryType.Backlog Items="_kanbanBoardState.Backlog" CanCreateStory="true" OnNewStoryCreate="@CreateNewStory" DisableMoveTo="true"></Swimlane>
+                <Swimlane Title="Backlog" StoryType=@Story.StoryType.Backlog Items="_kanbanBoardState.Backlog" CanCreateStory="true" OnNewStoryCreate="@CreateNewStory" DisableMoveTo="true" DeleteStory="@DeleteStory"></Swimlane>
             </div>
             <div class="col">
-                <Swimlane Title="In Progress" StoryType=@Story.StoryType.InProgress Items="_kanbanBoardState.InProgress" OnStoryMove="@MoveToInProgress"></Swimlane>
+                <Swimlane Title="In Progress" StoryType=@Story.StoryType.InProgress Items="_kanbanBoardState.InProgress" OnStoryMove="@MoveToInProgress" DeleteStory="@DeleteStory"></Swimlane>
             </div>
             <div class="col">
-                <Swimlane Title="Under Review" StoryType=@Story.StoryType.UnderReview Items="_kanbanBoardState.UnderReview" OnStoryMove="@MoveToUnderReview"></Swimlane>
+                <Swimlane Title="Under Review" StoryType=@Story.StoryType.UnderReview Items="_kanbanBoardState.UnderReview" OnStoryMove="@MoveToUnderReview" DeleteStory="@DeleteStory"></Swimlane>
             </div>
             <div class="col">
-                <Swimlane Title="Ready For Deploy" StoryType=@Story.StoryType.ReadyForDevelopment Items="_kanbanBoardState.ReadyForDeployment" OnStoryMove="@MoveToReadyForDeployment"></Swimlane>
+                <Swimlane Title="Ready For Deploy" StoryType=@Story.StoryType.ReadyForDevelopment Items="_kanbanBoardState.ReadyForDeployment" OnStoryMove="@MoveToReadyForDeployment" DeleteStory="@DeleteStory"></Swimlane>
             </div>
             <div class="col">
-                <Swimlane Title="Done" StoryType=@Story.StoryType.Done Items="_kanbanBoardState.Done" OnStoryMove="@MoveToDone"></Swimlane>
+                <Swimlane Title="Done" StoryType=@Story.StoryType.Done Items="_kanbanBoardState.Done" OnStoryMove="@MoveToDone" DeleteStory="@DeleteStory"></Swimlane>
             </div>
         </div>
     @* </div> *@
@@ -71,11 +71,18 @@
         await this.KanbanBoardService.MoveToDone(story.Id);
         RefreshBoard();
     }
-    
+
+    private async Task DeleteStory(string id)
+    {
+        await this.KanbanBoardService.DeleteStory(id);
+        RefreshBoard();
+    }
+
     private void RefreshBoard()
     {
         _kanbanBoardState = KanbanBoardService.GetBoardState();
         
         StateHasChanged();
     }
+
 }
